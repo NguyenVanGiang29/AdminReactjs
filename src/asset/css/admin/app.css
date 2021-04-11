@@ -57,3 +57,21 @@ h1.page-title{
 .sidebar .active:hover > .nav-link {
     color: #fafdd8;
 }
+
+.input-filter {
+  margin-left: 400px;
+  width: 40%;
+  height: 50px;
+}
+
+.f-lex {
+  display: flex;
+}
+
+.desc {
+    width: 95%;
+}
+
+.form-group {
+    margin: 5px !important;
+}

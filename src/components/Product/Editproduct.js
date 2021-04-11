@@ -42,9 +42,6 @@ export const Editproduct = (props) => {
     const image = img && require(`./Image/${img}.jpg`).default;
     // console.log(image);
 
-
-
-
     useEffect(() => {
         axios({
             method: "GET",
