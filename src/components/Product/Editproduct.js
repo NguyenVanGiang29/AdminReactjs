@@ -1,206 +1,197 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react'
-import { Form } from 'react-bootstrap';
+import React, { useEffect, useState } from 'react';
+
+import {URL} from '../../contants';
 
 
 export const Editproduct = (props) => {
 
-    const id_prd = props.match.params?.id
-    const id_cate = props.match.params?.id_cate
-
+    const id_prd = props?.id
+    const id_cate = props?.id_cate
+    
     const [cates, setCates] = useState([]);
-    const [cate, setCate] = useState([]);
-    const [price, setPrice] = useState(0);
-    const [name, setName] = useState("");
-    const [ishot, setIshot] = useState(0);
-    const [issale, setIssale] = useState(0);
-    const [desc, setDesc] = useState("");
-    const [img, setImg] = useState("");
 
-    // const [form, setForm] = userState({
-    //     name:'',
-    //     price:0,
-    //     cate_id:-1,
-    //     description:'',
-    // })
+    const [form, setForm] = useState({
+        id: null,
+        name_prd: '',
+        price: 0,
+        cate_id: 1,
+        image: '',
+        is_sale: false,
+        is_hot: false,
+        desc: '',
+    });
+    
     useEffect(() => {
         axios({
             method: "GET",
-            url: `http://localhost/MyLaravel/public/api/product/${id_prd}`,
+            url: `${URL}/products/${id_prd}`,
             data: null,
         }).then(res => {
-            setPrice(res.data.price);
-            setName(res.data.name_prd);
-            setIshot(res.data.is_hot);
-            setIssale(res.data.is_sale);
-            setDesc(res.data.description);
-            setImg(res.data.image);
-            setCate(res.data.cate_id || -1);
+            console.log(res.data);
+            setForm(res.data);
         })
-    }, [])
-
-    const image = img && require(`./Image/${img}.jpg`).default;
-    // console.log(image);
+    }, []);
 
     useEffect(() => {
         axios({
             method: "GET",
-            url: `http://localhost/MyLaravel/public/api/category`,
+            url: 'http://localhost/MyLaravel/public/api/category',
             data: null,
         }).then(res => {
-            setCates([...res.data]);
-        }).catch(e => {
-            console.log('category err', e)
+            console.log(res.data);
+            setCates([...res.data]);         
         })
-    }, [])
-
-
-
-    // useEffect(() => {
-    //     axios({
-    //         method: "GET",
-    //         url: 'http://localhost/MyLaravel/public/api/category',
-    //         data: null,
-    //     }).then(res => {
-    //         console.log(res.data);
-    //         setCate([...res.data]);         
-    //     })
-    // },[])
+    },[])
 
     const handleEditproduct = e => {
-        // e.preventDefault();
-        console.log(name, price, cate, desc, issale, ishot, img);
-        axios.post('http://localhost/MyLaravel/public/api/editproduct', { id_prd, name, price, cate, desc, ishot, issale }).then(res => {
-            console.log(res.data);
-        })
-
-
+       
     }
 
     const handleEditimage = e => {
-        const reader = new FileReader();
-        reader.onload = () => {
-            if (reader.readyState === 2) {
-                setImg(reader.result)
-            }
+        
+    }
+    
+    const handleEdit = (e) => {
+        e.preventDefault();
+        if (form.id) {
+            props.handleEdit(form);
         }
-        reader.readAsDataURL(e.target.files[0])
+    }
+    
+    const onHandleReset = () => {
+        setForm({
+            name_prd: '',
+            price: 0,
+            cate_id: 1,
+            image: '',
+            is_sale: false,
+            is_hot: false,
+            desc: '',
+        })
+    }
+    
+    const onHandleClose = () => {
+        onHandleReset();
+        props.onHandleSetModal(false)
     }
 
 
     return (
-        <div className="col-md-10 px-0 content-box">
-            <nav aria-label="breadcrumb" className="">
-                <div className="container-fluid breadcrumb-box">
-                    <ol className="breadcrumb mb-0">
-                        <li className="breadcrumb-item">
-                            <a href="#">
-                                <i className="fal fa-home-alt home-icon"></i>
-                            </a>
-                        </li>
-                        <li className="breadcrumb-item active" aria-current="page">Quản lý sản phẩm</li>
-                    </ol>
-                </div>
-            </nav>
-            <div className="container-fluid">
-                <div className="row">
-                    <h1 className="page-title">Quản lý sản phẩm</h1>
-                </div>
-                <div className="row">
-                    <div className="col-lg-12 bg-white add-product">
-                        <div className="panel panel-default m-md-5 m-2">
-                            <div className="panel-body">
-                                <form role="form" >
-                                    <div className="row">
-                                        <div className="col-md-6">
-                                            <div className="form-group">
-                                                <label>Tên sản phẩm</label>
-                                                <input name="name" className="form-control" type="text" value={name} onChange={(e) => setName(e.target.value)} />
-                                            </div>
-                                            <div className="form-group mt-2">
-                                                <label>Giá sản phẩm</label>
-                                                <input name="price" type="number" className="form-control" value={price} onChange={(e) => setPrice(e.target.value)} />
-                                            </div>
-                                            <div className="form-group mt-2">
-                                                <label>Danh mục</label>
-                                                <select
-                                                    name="category_id"
-                                                    className="form-control"
-                                                    onChange={(e) => setCate(e.target.value)}
-                                                    value={cate}
-                                                >
-                                                    <option value={-1}>----SELECT CATEGORY----</option>
-                                                    {cates?.length > 0 ? cates.map(cate => {
-                                                        return (
-                                                            <option value={cate?.id} key={cate?.id}>{cate?.name_cate}</option>
-                                                        )
-                                                    })
-                                                        :
-                                                        <h1>no data</h1>
-                                                    }
-
-                                                </select>
-                                            </div>
-
-                                            <div className="form-group mt-2">
-                                                <label>Trạng thái</label>
-                                                <div className="checkbox">
-                                                    <label>
-                                                        Giảm giá
-                                                            <input name="is_sale" type="checkbox"
-                                                                value={issale} checked={issale == 1 ? 'checked' : ''}
-                                                                onChange={(e) => e.target.checked ? setIssale(1) : setIssale(0)}
-                                                        />
-
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            <div className="form-group mt-2">
-                                                <label>Sản phẩm nổi bật</label>
-                                                <div className="checkbox">
-                                                    <label>
-                                                        Nổi bật
-                                                            <input name="is_top" type="checkbox" value={ishot} checked={ishot == 1 ? 'checked' : ''} onChange={(e) => e.target.checked ? setIshot(1) : setIshot(0)} />
-
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            <div className="form-group mt-2">
-                                                <label>Mô tả sản phẩm</label>
-                                                <textarea required name="discription" className="form-control" rows="3" type="text" value={desc} onChange={(e) => setDesc(e.target.value)}></textarea>
-                                            </div>
-                                        </div>
-                                        <div className="col-md-6">
-                                            <div className="form-group">
-                                                <label>Ảnh sản phẩm</label>
-                                                <label>
-                                                    <input required name='image' id="product-image-input" type="file" onChange={(e) => handleEditimage(e)} />
-                                                    <div className="image-box">
-                                                        <img
-                                                            id="product-image"
-                                                            src={image} className="w-75"
-                                                        />
-                                                    </div>
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div className="col-md-12 mt-4 text-right">
-                                            <button
-                                                name="sbm" type=""
-                                                className="btn btn-success"
-                                                onClick={() => handleEditproduct()}
-                                            >
-                                                Sửa mới
-                                                </button>
-                                            <button type="reset" className="btn btn-warning">Làm mới</button>
-                                        </div>
-                                    </div>
-                                </form>
+        <div className="modal fade show" tabIndex="-1" style={{display: 'block'}} aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title" id="exampleModalLabel">Add Product</h5>
+                <button 
+                    type="button" 
+                    className="btn-close" 
+                    aria-label="Close"
+                    onClick={()=>{onHandleClose()}}
+                ></button>
+              </div>
+              <div className="modal-body">
+                <form onSubmit={handleEdit}>
+                    <div className="row">
+                        <div className="col-md-12 ">
+                            <div className="form-group">
+                                <label>Tên sản phẩm</label>
+                                <input onChange={(e) => setForm({ ...form, name_prd: e.target.value })}
+                                    name="name"
+                                    className="form-control"
+                                    placeholder=""
+                                    value={form.name_prd}
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label>Ảnh sản phẩm</label>&nbsp;&nbsp;
+                                <input required name='image' id="product-image-input" type="file" 
+                                    onChange={(e)=>{
+                                        setForm({...form, image: e.target.files[0].name.slice(0,3)});
+                                    }}
+                                />&nbsp;
+                                {form.image && <div className="image-box">
+                                    <img 
+                                        id="product-image" 
+                                        src={form.image? require(`./Image/${form.image}.jpg`).default:''} 
+                                        className="w-75" 
+                                        width={80} height={100}
+                                    />
+                                </div>}
+                            </div>
+                            <div className="form-group mt-2">
+                                <label>Giá sản phẩm</label>
+                                <input onChange={(e) => setForm({ ...form, price: e.target.value })}
+                                    name="price"
+                                    type="number"
+                                    className="form-control"
+                                    value={form['price']}
+                                />
+                            </div>
+                            <div className="form-group mt-2">
+                                <label>Danh mục</label>
+                                <select
+                                    onChange={(e) => setForm({ ...form, cate_id: e.target.value })}
+                                    name="category_id"
+                                    className="form-control"
+                                    value={form['cate_id']}
+                                >
+                                    <option value={0}>-- CHỌN DANH MỤC --</option>
+                                    {cates?.length > 0 ? cates.map(cate => {
+                                        return (
+                                            <option value={cate?.id} >{cate?.name_cate}</option>
+                                        )
+                                    })
+                                        :
+                                        <h1>no data</h1>
+                                    }
+                                </select>
+                            </div>
+                            <div className="form-group mt-2">
+                                <label>Trạng thái</label>
+                                <div className="checkbox">
+                                    <label>
+                                        Giảm giá
+                                    </label> &nbsp;
+                                    <input 
+                                        name="is_sale" type="checkbox" 
+                                        onChange={(e) => e.target.checked ? setForm({...form, is_sale: true}) : setForm({...form, is_sale: false})} 
+                                        value = {form['is_sale']}
+                                    />
+                                </div>
+                            </div>
+                            <div className="form-group mt-2">
+                                <label>Sản phẩm nổi bật</label>
+                                <div className="checkbox">
+                                    <label>
+                                        Nổi bật
+                                    </label>&nbsp;
+                                    <input 
+                                        name="is_top" type="checkbox" 
+                                        onChange = {(e) => e.target.checked ? setForm({...form, is_hot: true}) : setForm({...form, is_hot: false})}
+                                        value = {form['is_hot']}
+                                    />
+                                </div>
+                            </div>
+                            <div className="form-group mt-2">
+                                <label>Mô tả sản phẩm</label>
+                                <textarea 
+                                    name="discription" 
+                                    className="form-control desc" rows="3" col="10"
+                                    onChange = { (e) => setForm({...form, desc:e.target.value})}
+                                    value = {form['desc']}   
+                                ></textarea>
                             </div>
                         </div>
+                        <div className="col-md-12 mt-4 text-right">
+                            <button name="sbm" type="submit" className="btn btn-success" onClick={handleEdit}>Lưu lại</button>{'  '}
+                            <button type="reset" className="btn btn-warning" onClick={onHandleReset}>Làm mới</button>
+                        </div>
                     </div>
-                </div>
+                </form>
+              </div>
             </div>
+          </div>
         </div>
     )
 }

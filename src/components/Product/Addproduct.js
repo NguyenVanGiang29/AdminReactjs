@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 
 
@@ -17,26 +17,6 @@ export const Addproduct = (props) => {
         is_hot: false,
         desc: '',
     })
-
-    useEffect(() => {
-        if (props.item.length > 0) {
-            let {item} = props;
-            setForm({
-                id : item.id,
-                name_prd: item.name_prd,
-                price: item.price,
-                image: item.image,
-                is_hot: item.is_hot,
-                is_sale: item.is_sale,
-                desc: item.desc,
-                cate_id: item.cate_id
-            });
-        }
-        
-        console.log(form);
-    }, [props])
-
-    
 
     const handleAdd = (e) => {
         e.preventDefault();
@@ -64,7 +44,6 @@ export const Addproduct = (props) => {
         props.onHandleSetModal(false)
     }
     
-    console.log(form);
 
     return (
         <div className="modal fade show" tabIndex="-1" style={{display: 'block'}} aria-labelledby="exampleModalLabel" aria-hidden="true">

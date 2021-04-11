@@ -3,6 +3,7 @@ import React, {useState} from 'react';
 
 import ProductList from './ProductList';
 import {Addproduct} from './Addproduct';
+import {Editproduct} from './Editproduct';
 
 import useStorage from '../../hooks/useStorage';
 
@@ -10,7 +11,8 @@ export const Manageprd = (props) => {
 
     const [filter, setFilter] = useState('');
     const [modal, setModal] = useState(false);
-    const [item, setItem] = useState({});
+    const [modalEdit, setModalEdit] = useState(false);
+    const [idEdit, setIDEdit] = useState(0);
     const [items, addItem, putItem, deleteItem] = useStorage([]);
     
     let products = items;
@@ -34,10 +36,8 @@ export const Manageprd = (props) => {
     }
     
     const handleGetItem = (id) => {
-        let index = items.findIndex(item => item.id === id);
-        
-        setItem({...items[index]});
-        setModal(true);
+        setIDEdit(id);
+        setModalEdit(true);
     }
 
     return (
@@ -84,8 +84,14 @@ export const Manageprd = (props) => {
               modal && <Addproduct 
                   onHandleSetModal={setModal} 
                   onHandleAdd={onHandleAdd}
-                  item={item}
                 />
+            }
+            
+            {
+                modalEdit && <Editproduct 
+                    id={idEdit} 
+                    onHandleSetModal={setModalEdit} 
+                   />
             }
         </div>
     )
