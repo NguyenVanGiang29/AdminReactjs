@@ -7,7 +7,11 @@ const ProductItem = (props) => {
     var img = require(`./Image/${image}.jpg`).default;
     
     const handleDeleteproduct =  (id_prd) => { 
-        props.handleDelete(id_prd);
+        let check = window.confirm("Bạn có chắc chắn muốn xoá?");
+        
+        if (check) {
+            props.handleDelete(id_prd);
+        }
     }
     
     const handleGetItem = (id) => {

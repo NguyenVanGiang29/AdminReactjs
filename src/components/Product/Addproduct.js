@@ -75,7 +75,7 @@ export const Addproduct = (props) => {
                                 <label>Ảnh sản phẩm</label>&nbsp;&nbsp;
                                 <input required name='image' id="product-image-input" type="file" 
                                     onChange={(e)=>{
-                                        setForm({...form, image: e.target.files[0].name.slice(0,3)});
+                                        setForm({...form, image: e.target.files[0].name.split('.', 1)});
                                     }}
                                 />&nbsp;
                                 {form.image && <div className="image-box">
